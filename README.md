@@ -68,4 +68,4 @@ The analyzer intentionally does not perform legal move-history validation, move 
 
 ## AI-assisted transcript
 
-The requested environment did not provide a complete transcript export capability. `AI-ASSISTED-TRANSCRIPT.md` contains an accurate factual work and validation record, but not a fabricated message-by-message replacement for the unavailable full transcript.
+`AI-ASSISTED-TRANSCRIPT2.md` contains the exported AI-assisted development transcript. `AI-ASSISTED-TRANSCRIPT.md` remains the concise factual work and validation record.
