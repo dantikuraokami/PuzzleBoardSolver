@@ -68,4 +68,4 @@ The analyzer intentionally does not perform legal move-history validation, move 
 
 ## AI-assisted transcript
 
-`AI-ASSISTED-TRANSCRIPT2.md` contains the exported AI-assisted development transcript. `AI-ASSISTED-TRANSCRIPT.md` remains the concise factual work and validation record.
+`AI-ASSISTED-TRANSCRIPT.md` contains the exported AI-assisted development transcript.
