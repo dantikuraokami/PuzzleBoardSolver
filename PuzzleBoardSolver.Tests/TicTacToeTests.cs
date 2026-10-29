@@ -54,6 +54,51 @@ public sealed class TicTacToeTests
     }
 
     [Fact]
+    public void DetectsSingleWinnerOnFull4x4Board()
+    {
+        var cells = new[,] { { 'X', 'X', 'X', 'X' }, { 'X', 'O', 'X', 'O' }, { 'O', 'X', 'O', 'X' }, { 'X', 'O', 'X', 'O' } };
+        var rules = new BoardRules<char>('.', 4, [WinCondition.Horizontal]);
+
+        var result = analyzer.Analyze(Board<char>.FromArray(cells, rules));
+
+        Assert.Equal(BoardStatus.Win, result.Status);
+        Assert.False(result.AnyMovesLeft);
+        Assert.True(result.IsGameOver);
+        Assert.Equal('X', Assert.Single(result.Winners));
+        Assert.Equal(WinCondition.Horizontal, Assert.Single(result.WinningConditions));
+    }
+
+    [Fact]
+    public void EmptyCornersAndEmptyTwoByTwoBlocksDoNotWin()
+    {
+        var emptyCorners = new[,] { { '.', 'X', 'O', '.' }, { 'O', 'X', 'O', 'X' }, { 'X', 'O', 'X', 'O' }, { '.', 'X', 'O', '.' } };
+        var cornerRules = new BoardRules<char>('.', 4, [WinCondition.AllFourCorners]);
+        var cornerResult = analyzer.Analyze(Board<char>.FromArray(emptyCorners, cornerRules));
+
+        var emptyBlock = new[,] { { '.', '.', 'X', 'O' }, { '.', '.', 'O', 'X' }, { 'X', 'O', 'X', 'O' }, { 'O', 'X', 'O', 'X' } };
+        var boxRules = new BoardRules<char>('.', 4, [WinCondition.Box2x2]);
+        var boxResult = analyzer.Analyze(Board<char>.FromArray(emptyBlock, boxRules));
+
+        Assert.Equal(BoardStatus.InProgress, cornerResult.Status);
+        Assert.Empty(cornerResult.Winners);
+        Assert.Equal(BoardStatus.InProgress, boxResult.Status);
+        Assert.Empty(boxResult.Winners);
+    }
+
+    [Fact]
+    public void NearMissLinesDoNotWin()
+    {
+        var cells = new[,] { { 'X', 'X', 'X', '.' }, { '.', 'X', 'X', 'X' }, { '.', '.', '.', '.' }, { '.', '.', '.', '.' } };
+        var rules = new BoardRules<char>('.', 4, [WinCondition.Horizontal, WinCondition.Vertical, WinCondition.Diagonal]);
+
+        var result = analyzer.Analyze(Board<char>.FromArray(cells, rules));
+
+        Assert.Equal(BoardStatus.InProgress, result.Status);
+        Assert.Empty(result.Winners);
+        Assert.Empty(result.WinningConditions);
+    }
+
+    [Fact]
     public void DrawAndMultipleWinnersHaveCorrectSemantics()
     {
         var draw = new[,] { { 'X', 'X', 'O', 'O' }, { 'O', 'O', 'X', 'X' }, { 'X', 'O', 'X', 'O' }, { 'O', 'X', 'O', 'X' } };
@@ -112,17 +157,20 @@ public sealed class TicTacToeTests
     [Fact]
     public void RejectsNullInputsAcrossAnalysisAndWinnerApis()
     {
-        Board<char> nullBoard = null!;
+        Board<char>? nullBoard = null;
+        BoardRules<char>? nullRules = null;
         char[,] nullCells = null!;
 
-        Assert.Throws<ArgumentNullException>(() => analyzer.Analyze(nullBoard));
+        Assert.Throws<ArgumentNullException>(() => analyzer.Analyze(nullBoard!));
         Assert.Throws<ArgumentNullException>(() => analyzer.Analyze(nullCells));
-        Assert.Throws<ArgumentNullException>(() => analyzer.CheckWinner(nullBoard));
+        Assert.Throws<ArgumentNullException>(() => analyzer.CheckWinner(nullBoard!));
         Assert.Throws<ArgumentNullException>(() => analyzer.CheckWinner(nullCells));
-        Assert.Throws<ArgumentNullException>(() => analyzer.AnyMovesLeft(nullBoard));
+        Assert.Throws<ArgumentNullException>(() => analyzer.TryCheckWinner(nullBoard!, out _));
+        Assert.Throws<ArgumentNullException>(() => analyzer.AnyMovesLeft(nullBoard!));
         Assert.Throws<ArgumentNullException>(() => analyzer.AnyMovesLeft(nullCells));
-        Assert.Throws<ArgumentNullException>(() => analyzer.IsGameOver(nullBoard));
+        Assert.Throws<ArgumentNullException>(() => analyzer.IsGameOver(nullBoard!));
         Assert.Throws<ArgumentNullException>(() => analyzer.IsGameOver(nullCells));
+        Assert.Throws<ArgumentNullException>(() => new Board<char>(1, 1, ['.'], nullRules!));
     }
 
     [Fact]
