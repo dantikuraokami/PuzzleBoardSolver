@@ -1,0 +1,6 @@
+<Solution>
+  <Project Path="PuzzleBoardSolver.Benchmarks/PuzzleBoardSolver.Benchmarks.csproj" />
+  <Project Path="PuzzleBoardSolver.Core/PuzzleBoardSolver.Core.csproj" />
+  <Project Path="PuzzleBoardSolver.Tests/PuzzleBoardSolver.Tests.csproj" />
+  <Project Path="PuzzleBoardSolver/PuzzleBoardSolver.csproj" />
+</Solution>
